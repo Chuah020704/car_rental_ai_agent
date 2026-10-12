@@ -134,7 +134,7 @@ httpx2==2.13.1
     #   openai
 httpx2-jsfetch==1.0 ; sys_platform == 'emscripten'
     # via httpx2
-huggingface-hub==1.33.0
+huggingface-hub==2.2.0
     # via
     #   fastembed
     #   tokenizers
