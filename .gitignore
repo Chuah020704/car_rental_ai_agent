@@ -1,0 +1,35 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# --- Virtual environment / uv ---
+.venv/
+uv.lock.bak
+
+# --- Secrets & environment ---
+.env
+.env.*
+!.env.example
+*.pfx
+*.pem
+
+# --- Data / runtime artifacts ---
+.chroma/
+.checkpoints/
+*.sqlite
+*.sqlite3
+logs/
+
+# --- Agent tooling (not project source, see docs/adr) ---
+.agents/
+skills-lock.json
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

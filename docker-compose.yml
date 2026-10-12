@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      LLM_PROVIDER: ${LLM_PROVIDER:-google}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-local}
+      AUTH_MODE: ${AUTH_MODE:-simulated}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-only-change-me-replace-with-32-bytes-random-value}
+      CORS_ORIGIN: "http://localhost:8501"
+      ALLOWED_HOST: "localhost;127.0.0.1;api"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - "8501:8501"
+    environment:
+      API_BASE_URL: "http://api:8081"
+    depends_on:
+      api:
+        condition: service_healthy

@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+# Streamlit UI — a thin HTTP client, no LLM/agent dependencies needed at runtime.
+FROM python:3.13-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH="/app"
+
+WORKDIR /app
+
+RUN groupadd -g 1001 appuser && useradd --no-log-init -u 1001 -g 1001 --create-home appuser
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir streamlit==1.65.0 httpx==0.28.1
+
+COPY --chown=appuser:appuser app/ui/ /app/app/ui/
+RUN touch /app/app/__init__.py
+
+USER appuser
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app/ui/streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]

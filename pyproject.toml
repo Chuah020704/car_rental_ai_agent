@@ -1,0 +1,90 @@
+[project]
+name = "car-rental-ai-agent"
+version = "0.1.0"
+description = "Customer-facing AI agent for a car rental company: vehicle search, reservation management, and RAG-based policy Q&A, built with LangGraph."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "langgraph>=0.2.60",
+    "langgraph-checkpoint-sqlite>=2.0.0",
+    "langchain>=0.3.14",
+    "langchain-core>=0.3.29",
+    "langchain-google-genai>=2.0.8",
+    "langchain-openai>=0.3.1",
+    "langchain-anthropic>=0.3.3",
+    "langchain-chroma>=0.2.0",
+    "langchain-text-splitters>=0.3.5",
+    "chromadb>=0.5.23",
+    "fastembed>=0.4.2",
+    "fastapi>=0.115.6",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.4",
+    "pydantic-settings>=2.7.1",
+    "pyjwt[crypto]>=2.9.0",
+    "msal>=1.31.1",
+    "structlog>=24.4.0",
+    "pyyaml>=6.0.2",
+    "python-dotenv>=1.0.1",
+    "streamlit>=1.41.1",
+    "httpx>=0.28.1",
+    "sse-starlette>=2.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.2",
+    "ruff>=0.9.2",
+    "mypy>=1.14.1",
+    "pre-commit>=4.0.1",
+    "types-pyyaml>=6.0.12",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+line-ending = "lf"
+quote-style = "double"
+
+[tool.ruff.lint]
+# E501: line length is handled by the formatter, not the linter.
+# N818: this project follows FastAPI's own HTTPException-style "*Exception" naming
+# for domain errors, not stdlib's "*Error" convention.
+ignore = ["E501", "N818"]
+per-file-ignores = { "__init__.py" = ["F401"], "tests/**/*.py" = ["S101", "ARG001"], "app/agent/callbacks.py" = ["ANN401", "ARG002"], "tests/fakes.py" = ["ANN401", "ARG002"] }
+select = [
+    "E",
+    "W",
+    "F",
+    "B",
+    "I",
+    "UP",
+    "ANN",
+    "S",
+    "N",
+    "ARG",
+    "RUF"
+]
+task-tags = ["TODO", "FIXME", "BUG"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection idiom is Depends(...)/Query(...) as a default
+# argument value; it's resolved once per request by FastAPI, not a mutable-
+# default bug. This is ruff's own documented way to allowlist it (see
+# https://docs.astral.sh/ruff/rules/function-call-in-default-argument/).
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "llm: marks tests that call a real LLM provider (deselect with '-m \"not llm\"')",
+]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+disallow_untyped_defs = true
